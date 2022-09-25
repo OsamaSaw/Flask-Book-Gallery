@@ -1,0 +1,67 @@
+{% extends "base.html" %} {% block title %}Book Gallery{% endblock %} {% block content
+%}
+
+   <form method="POST">
+        <div class="form-group">
+            <div class="flexx">
+                <label for="search">Search</label>
+                <input type="text"  class="form-control" id="search" name="search" placeholder="By Author Name or Book Title">
+                <input type="radio" name="radio" value="Author"> Author&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                <input type="radio" name="radio" value="Title" checked> Title&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                <input type="radio" name="radio" value="Tag"> Tag&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                <button type="submit" class="btn-primary btn">Search</button>
+            </div>
+        </div>
+    </form>
+
+{% if search %}
+<span class="search" aria-hidden="true">Search for: {{search}}</span>
+<br/>
+<br/>
+{% endif %}
+<div class="box">
+    {% for item in pagination.items %}
+        <div class="inner">
+            <h5 >Title: {{ item.Book.title.split(":")[0] }}</h5>
+            <img src="{{item.Book.cover}}" width="200" height="300">
+            <h5 >Author: {{ item.Author.name }}</h5>
+            <h5 >Type: {{ item.Tags.tag }}</h5>
+        </div>
+
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if pagination.has_prev %}
+        <span>
+            <a class='page-number' href="{{ url_for('views.home', page=1) }}">
+                {{ '<<<' }}
+            </a>
+        </span>
+    {% endif %}
+
+    {% for number in range(1, pagination.pages+1) %}
+
+        {% if pagination.page != number and  (pagination.page)-1 <= number <= (pagination.page)+1 %}
+            <span>
+                    <a class='page-number'
+                        href="{{ url_for('views.home', page=number) }}">
+                    {{ number }}
+                    </a>
+            </span>
+        {% elif pagination.page == number %}
+            <span class='current-page-number'>{{ number }}</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+        <span>
+            <a class='page-number'
+                href="{{ url_for('views.home', page=pagination.pages) }}">
+                {{ '>>>' }}
+            </a>
+        </span>
+    {% endif %}
+</div>
+
+{% endblock %}

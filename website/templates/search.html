@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+
+<div>
+    <form method="POST">
+      <div class="mb-3">
+        <label for="Search" class="form-label">Search</label>
+        <input type="text" class="form-control" id="Search" aria-describedby="Search" placeholder="By Author Name or Book Title">
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+{% if search %}
+<span aria-hidden="true">Search for: {{search}}</span>
+{% endif %}
+<div class="box">
+    {% for book in books %}
+        <div class="inner">
+            <h5 >Title: {{ book[0] }}</h5>
+            <img src="{{book[2]}}" width="200" height="300">
+            <h5 >Author: {{ book[1] }}</h5>
+        </div>
+
+    {% endfor %}
+</div>
+
+{% endblock %}
