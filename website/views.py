@@ -3,11 +3,9 @@ import datetime
 import jwt
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, session, make_response
 from .models import Book, Author, Tags, association_table, User
-from sqlalchemy import or_
 from . import db
 import json
 from . import books
-from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
 from flask_login import login_user, login_required, logout_user, current_user
 
 views = Blueprint('views', __name__)
