@@ -105,10 +105,10 @@ def home():
                     return render_template("home.html", pagination=pagination, search=search_query, user=current_user)
                 else:
                     pagination = db.session.query(Book, Author, Tags, association_table). \
-                        filter(Tags.tag.contains(search_query)).\
+                        filter(Tags.tag.contains(search_query)). \
                         join(association_table, Book.id == association_table.c.book_id). \
                         join(Tags, Tags.id == association_table.c.tag_id). \
-                        join(Author, Book.author_id == Author.id).\
+                        join(Author, Book.author_id == Author.id). \
                         paginate(page, per_page=50)
                     return render_template("home.html", pagination=pagination, search=search_query, user=current_user)
 
@@ -122,7 +122,7 @@ def home():
             p = db.session.query(Book, Author, Tags, association_table). \
                 join(association_table, Book.id == association_table.c.book_id). \
                 join(Tags, Tags.id == association_table.c.tag_id). \
-                join(Author, Book.author_id == Author.id).\
+                join(Author, Book.author_id == Author.id). \
                 paginate(page, per_page=10)
 
             return render_template("home.html", pagination=p, user=current_user)
@@ -182,6 +182,7 @@ def delete_category(tag):
         db.session.commit()
         return json.dumps({"Status": "Success", "msg": "Category Deleted "})
 
+
 # -----------------------------------------------------------------------------
 
 @views.route('/get/books-by-category/', methods=['GET'])
@@ -191,16 +192,14 @@ def get_category_books_count():
     if not search_tag:
         return json.dumps({"Status": "Error", "msg": "Does Not Exist"})
     else:
-        books = []
+        category_books = []
         for tag in search_tag:
-            # count = association_table.query.filter(association_table.tag_id == Tags.tag == tag.tag).count()
             count = db.session.query(Tags, association_table). \
                 filter(Tags.tag.contains(tag.tag)). \
                 join(Tags, Tags.id == association_table.c.tag_id).count()
-            # print(count, tag.tag)
-            books.append([tag.tag, count])
+            category_books.append([tag.tag, count])
 
-        return json.dumps({"Status": "Success", "msg": books})
+        return json.dumps({"Status": "Success", "msg": category_books})
 
 
 @views.route('/get/books-by-category/<cate>', methods=['GET'])
@@ -210,7 +209,7 @@ def get_category_books_cate(cate):
     if not search_tag:
         return json.dumps({"Status": "Error", "msg": "Does Not Exist"})
     else:
-        books = []
+        category_books = []
         count = 0
         pagination = db.session.query(Book, Tags, association_table). \
             filter(Tags.tag.contains(cate)). \
@@ -219,11 +218,11 @@ def get_category_books_cate(cate):
 
         for item in pagination:
             print(item.Book.title)
-            books.append([item.Book.id, item.Book.title])
+            category_books.append([item.Book.id, item.Book.title])
             count += 1
         print(count)
 
-        return json.dumps({"Status": "Success", "size": count, "msg": books})
+        return json.dumps({"Status": "Success", "size": count, "msg": category_books})
 
 
 @views.route('/get/count-by-category/<cate>', methods=['GET'])
@@ -233,8 +232,8 @@ def get_category_books_by_cate_count(cate):
     if not search_tag:
         return json.dumps({"Status": "Error", "msg": "Does Not Exist"})
     else:
-        count = db.session.query(Tags, association_table).\
-            filter(Tags.tag.contains(cate)).\
+        count = db.session.query(Tags, association_table). \
+            filter(Tags.tag.contains(cate)). \
             join(Tags, Tags.id == association_table.c.tag_id).count()
 
         # for item in pagination:
@@ -257,8 +256,8 @@ def get_books_by_auther(auth):
         book_search = Book.query.filter_by(author_id=int(auther_search.id))
         if not book_search:
             return json.dumps({"Status": "Error", "msg": "No Books Found"})
-        books=[]
+        auther_books = []
         for book in book_search:
-            books.append(book.title)
+            auther_books.append(book.title)
 
-        return json.dumps({"Status": "Success", "msg": books})
+        return json.dumps({"Status": "Success", "msg": auther_books})
