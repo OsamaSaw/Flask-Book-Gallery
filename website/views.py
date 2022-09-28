@@ -244,6 +244,8 @@ def get_category_books_by_cate_count(cate):
 
         return json.dumps({"Status": "Success", "msg": count})
 
+# --------------------------------------------------------
+
 
 @views.route('/get/books-by-auther/<auth>', methods=['GET'])
 # @login_required
@@ -261,3 +263,5 @@ def get_books_by_auther(auth):
             auther_books.append(book.title)
 
         return json.dumps({"Status": "Success", "msg": auther_books})
+
+# --------------------------------------------------------
