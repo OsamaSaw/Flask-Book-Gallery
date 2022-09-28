@@ -245,3 +245,20 @@ def get_category_books_by_cate_count(cate):
 
         return json.dumps({"Status": "Success", "msg": count})
 
+
+@views.route('/get/books-by-auther/<auth>', methods=['GET'])
+# @login_required
+def get_books_by_auther(auth):
+    auth = auth.replace('-', ', ')
+    auther_search = Author.query.filter_by(name=auth).first()
+    if not auther_search:
+        return json.dumps({"Status": "Error", "msg": "Author Does Not Exist"})
+    else:
+        book_search = Book.query.filter_by(author_id=int(auther_search.id))
+        if not book_search:
+            return json.dumps({"Status": "Error", "msg": "No Books Found"})
+        books=[]
+        for book in book_search:
+            books.append(book.title)
+
+        return json.dumps({"Status": "Success", "msg": books})
